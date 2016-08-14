@@ -81,8 +81,7 @@ where flags are:`)
 		if err != nil {
 			log.Fatal(err)
 		}
-		for i := range repos {
-			repo := &repos[i]
+		for _, repo := range repos {
 			fmt.Fprintf(tw, "%s\t%s\n", *repo.Name, *repo.Description)
 		}
 		if resp.NextPage == 0 {
