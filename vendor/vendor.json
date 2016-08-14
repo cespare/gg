@@ -1,0 +1,37 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "BmNKODcJn+UlhVwVP8m0c2WWbrk=",
+			"path": "github.com/google/go-github/github",
+			"revision": "56add9d4071bb1a06003a1239ebbc1500692b55d",
+			"revisionTime": "2016-07-29T03:42:35Z"
+		},
+		{
+			"checksumSHA1": "fQfbLbXtO2VUPje/bqhDfzKIZxI=",
+			"path": "github.com/google/go-querystring/query",
+			"revision": "9235644dd9e52eeae6fa48efd539fdc351a0af53",
+			"revisionTime": "2016-03-11T01:20:12Z"
+		},
+		{
+			"checksumSHA1": "88lxkrVVZyBqOBOFnNMBwEexiLY=",
+			"path": "golang.org/x/net/context",
+			"revision": "07b51741c1d6423d4a6abab1c49940ec09cb1aaf",
+			"revisionTime": "2016-08-11T10:50:59Z"
+		},
+		{
+			"checksumSHA1": "huY7w6ZQ5tPHGGOMnsB1FtZjlas=",
+			"path": "golang.org/x/oauth2",
+			"revision": "4784bb855e56a530f1ce5d788959359ed6cb4a16",
+			"revisionTime": "2016-08-10T08:59:49Z"
+		},
+		{
+			"checksumSHA1": "0mOCT6cMY/duKeqDrPLgpte35D4=",
+			"path": "golang.org/x/oauth2/internal",
+			"revision": "4784bb855e56a530f1ce5d788959359ed6cb4a16",
+			"revisionTime": "2016-08-10T08:59:49Z"
+		}
+	],
+	"rootPath": "github.com/cespare/gg"
+}
