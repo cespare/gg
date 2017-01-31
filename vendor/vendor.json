@@ -3,10 +3,10 @@
 	"ignore": "",
 	"package": [
 		{
-			"checksumSHA1": "BmNKODcJn+UlhVwVP8m0c2WWbrk=",
+			"checksumSHA1": "HkLR02i/pNWSfZH1sm9d/lBnSE4=",
 			"path": "github.com/google/go-github/github",
-			"revision": "56add9d4071bb1a06003a1239ebbc1500692b55d",
-			"revisionTime": "2016-07-29T03:42:35Z"
+			"revision": "b8da2106aeaac99e5d406e4528278243eecc1cb6",
+			"revisionTime": "2017-01-31T22:50:21Z"
 		},
 		{
 			"checksumSHA1": "fQfbLbXtO2VUPje/bqhDfzKIZxI=",
@@ -21,10 +21,10 @@
 			"revisionTime": "2016-08-11T10:50:59Z"
 		},
 		{
-			"checksumSHA1": "huY7w6ZQ5tPHGGOMnsB1FtZjlas=",
+			"checksumSHA1": "GhF5jUDZGz/+yGkEfyB1nwylKu8=",
 			"path": "golang.org/x/oauth2",
-			"revision": "4784bb855e56a530f1ce5d788959359ed6cb4a16",
-			"revisionTime": "2016-08-10T08:59:49Z"
+			"revision": "314dd2c0bf3ebd592ec0d20847d27e79d0dbe8dd",
+			"revisionTime": "2016-12-14T09:25:55Z"
 		},
 		{
 			"checksumSHA1": "0mOCT6cMY/duKeqDrPLgpte35D4=",
