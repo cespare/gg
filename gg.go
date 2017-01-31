@@ -82,7 +82,11 @@ where flags are:`)
 			log.Fatal(err)
 		}
 		for _, repo := range repos {
-			fmt.Fprintf(tw, "%s\t%s\n", *repo.Name, *repo.Description)
+			var desc string
+			if repo.Description != nil {
+				desc = *repo.Description
+			}
+			fmt.Fprintf(tw, "%s\t%s\n", *repo.Name, desc)
 		}
 		if resp.NextPage == 0 {
 			break
