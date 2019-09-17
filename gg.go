@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -77,7 +78,7 @@ where flags are:`)
 	opt := &github.RepositoryListOptions{Type: "owner"}
 	tw := tabwriter.NewWriter(os.Stdout, 0, 1, 4, ' ', 0)
 	for {
-		repos, resp, err := client.Repositories.List(*user, opt)
+		repos, resp, err := client.Repositories.List(context.Background(), *user, opt)
 		if err != nil {
 			log.Fatal(err)
 		}
