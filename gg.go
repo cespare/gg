@@ -7,75 +7,69 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"sort"
 	"strings"
 	"text/tabwriter"
 
+	"github.com/cespare/subcmd"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
-var commands = map[string]func(client *github.Client, args []string){
-	"repos": listRepos,
-}
-
-func usage() {
-	fmt.Fprintf(
-		os.Stderr,
-		"usage: %s command\nwhere command is one of\n",
-		os.Args[0],
-	)
-	var cmds []string
-	for cmd := range commands {
-		cmds = append(cmds, cmd)
-	}
-	sort.Strings(cmds)
-	for _, cmd := range cmds {
-		fmt.Fprintf(os.Stderr, "\t%s\n", cmd)
-	}
-	fmt.Fprintf(
-		os.Stderr,
-		"Run %s command -h to see more about a particular command.\n",
-		os.Args[0],
-	)
-	os.Exit(1)
+var commands = []subcmd.Command{
+	{
+		Name:        "repos",
+		Description: "list repositories",
+		Do:          listRepos,
+	},
 }
 
 func main() {
 	log.SetFlags(0)
-	if len(os.Args) < 2 || os.Args[1] == "help" || os.Args[1] == "-h" {
-		usage()
-	}
-	f, ok := commands[os.Args[1]]
-	if !ok {
-		log.Fatalf("No command %q", os.Args[1])
-	}
-	token, err := loadToken()
-	if err != nil {
-		log.Fatalln("Error loading gg token:", err)
-	}
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(oauth2.NoContext, ts)
-	client := github.NewClient(tc)
-	f(client, os.Args[2:])
+	subcmd.Run(commands)
 }
 
-func listRepos(client *github.Client, args []string) {
-	fs := flag.NewFlagSet("gg", flag.ExitOnError)
-	user := fs.String("u", "", "Username (if different from credentials)")
-	usage := func() {
-		fmt.Fprintln(os.Stderr, `usage: repos [flags]
-where flags are:`)
-		fs.PrintDefaults()
-	}
-	fs.Usage = usage
+func listRepos(args []string) {
+	var (
+		fs              = flag.NewFlagSet("gg repos", flag.ExitOnError)
+		user            = fs.String("u", "", "Username (if different from credentials)")
+		public          = fs.Bool("public", false, "Only include public repos")
+		private         = fs.Bool("private", false, "Only include private repos")
+		includeForks    = fs.Bool("includeforks", false, "Include forked repos")
+		includeArchived = fs.Bool("includearchived", false, "Include archived repos")
+		sortBy          = fs.String("sortby", "name", "Sort by `field`: one of name, created, updated, pushed")
+	)
 	fs.Parse(args)
+
 	if fs.NArg() > 0 {
-		usage()
+		fs.Usage()
 		os.Exit(1)
 	}
+	if *public && *private {
+		log.Fatal("Only one of -public and -private may be given")
+	}
+	switch *sortBy {
+	case "name":
+		*sortBy = "full_name"
+	case "created", "updated", "pushed":
+	default:
+		log.Fatalf("Unknown -sortby option %q", *sortBy)
+	}
 
-	opt := &github.RepositoryListOptions{Type: "owner"}
+	client, err := makeGHClient()
+	if err != nil {
+		log.Fatalln("Cannot create GitHub client:", err)
+	}
+
+	opt := &github.RepositoryListOptions{
+		Affiliation: "owner",
+		Sort:        *sortBy,
+	}
+	if *public {
+		opt.Visibility = "public"
+	}
+	if *private {
+		opt.Visibility = "private"
+	}
 	tw := tabwriter.NewWriter(os.Stdout, 0, 1, 4, ' ', 0)
 	for {
 		repos, resp, err := client.Repositories.List(context.Background(), *user, opt)
@@ -83,6 +77,12 @@ where flags are:`)
 			log.Fatal(err)
 		}
 		for _, repo := range repos {
+			if repo.Fork != nil && *repo.Fork && !*includeForks {
+				continue
+			}
+			if repo.Archived != nil && *repo.Archived && !*includeArchived {
+				continue
+			}
 			var desc string
 			if repo.Description != nil {
 				desc = *repo.Description
@@ -95,6 +95,16 @@ where flags are:`)
 		opt.ListOptions.Page = resp.NextPage
 	}
 	tw.Flush()
+}
+
+func makeGHClient() (*github.Client, error) {
+	token, err := loadToken()
+	if err != nil {
+		return nil, fmt.Errorf("Error loading GitHub token: %w", err)
+	}
+	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
+	tc := oauth2.NewClient(oauth2.NoContext, ts)
+	return github.NewClient(tc), nil
 }
 
 func loadToken() (string, error) {
