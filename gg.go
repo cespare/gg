@@ -100,10 +100,10 @@ func listRepos(args []string) {
 func makeGHClient() (*github.Client, error) {
 	token, err := loadToken()
 	if err != nil {
-		return nil, fmt.Errorf("Error loading GitHub token: %w", err)
+		return nil, fmt.Errorf("error loading GitHub token: %w", err)
 	}
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(oauth2.NoContext, ts)
+	tc := oauth2.NewClient(context.Background(), ts)
 	return github.NewClient(tc), nil
 }
 
